@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from sqlalchemy import URL
 from config import DB_HOST, DB_PASS, DB_USER, DB_PORT, DB_NAME
 from models_func import *
+import random
+from test import *
 
 
 url_object = URL.create(
@@ -32,9 +34,10 @@ migrate = Migrate(app, db, render_as_batch=True)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    form = PostForm()
+    resident_list = getResident()
+    resident_list.sort(key=lambda x: x.last_name)
     flash("Приветики!", "success")
-    return render_template("index.html", form=form)
+    return render_template("index.html", resident_list=resident_list)
 
 
 
@@ -44,10 +47,13 @@ def profile(id):
     return render_template("index.html", form=form)
 
 
-@app.route("/test")
-def test():
-    print(postParkingSlot(3, num=3, letter="B"))
-    return "1"
+# @app.route("/test")
+# def test():
+#     with db.session() as session:
+#
+#
+#
+#     return generate_random_car_number()
 
 
 

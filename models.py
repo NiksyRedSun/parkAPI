@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, joinedload
 from typing import List
 
 
@@ -10,21 +10,27 @@ db = SQLAlchemy()
 # flask db upgrade
 
 
+residence = db.Table('residence',
+    db.Column('apartment_id', db.Integer, db.ForeignKey('apartments.id'), primary_key=True),
+    db.Column('resident_id', db.Integer, db.ForeignKey('residents.id'), primary_key=True)
+)
+
 class Resident(db.Model):
 
     __tablename__ = 'residents'
 
     id = db.Column(db.Integer, primary_key=True)
 
-    second_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
-    surname = db.Column(db.String(50), nullable=False)
+    patronymic = db.Column(db.String(50), nullable=False)
     pas_series = db.Column(db.String(5), nullable=False, unique=True)
     pas_number = db.Column(db.String(6), nullable=False, unique=True)
 
     cars: Mapped[List["Car"]] = db.relationship(back_populates="resident")
     parking_slots: Mapped[List["ParkingSlot"]] = db.relationship(back_populates="resident")
-    apartments: Mapped[List["Apartment"]] = db.relationship(back_populates="resident")
+    apartments: Mapped[List["Apartment"]] = db.relationship("Apartment", secondary=residence,
+                                                            backref=db.backref('residents'))
 
     def __repr__(self):
         return f"resident_id: {self.id}, resident_name: {self.first_name}"
@@ -33,15 +39,8 @@ class Resident(db.Model):
 class Apartment(db.Model):
 
     __tablename__ = 'apartments'
-    __table_args__ = (db.UniqueConstraint('resident_id', 'num'),)
 
     id = db.Column(db.Integer, primary_key=True)
-    resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
-
-    num = db.Column(db.Integer, nullable=False)
-
-    resident: Mapped["Resident"] = db.relationship(back_populates="apartments")
-
 
     def __repr__(self):
         return f"apartment_id: {self.id}"
@@ -55,7 +54,6 @@ class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
 
-    brand = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(50), nullable=False)
     plate = db.Column(db.String(50), nullable=False, unique=True)
 
@@ -68,10 +66,10 @@ class Car(db.Model):
 class ParkingSlot(db.Model):
 
     __tablename__ = 'parking_slots'
-    __table_args__ = (db.UniqueConstraint('resident_id', 'num', 'letter'),)
+    __table_args__ = (db.UniqueConstraint('num', 'letter'),)
 
     id = db.Column(db.Integer, primary_key=True)
-    resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
+    resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=True)
 
     num = db.Column(db.Integer, nullable=False)
     letter = db.Column(db.String(1), nullable=False)

@@ -6,6 +6,9 @@ from typing import List
 
 db = SQLAlchemy()
 
+# flask db migrate -m "message"
+# flask db upgrade
+
 
 class Resident(db.Model):
 
@@ -13,23 +16,24 @@ class Resident(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    first_name = db.Column(db.String(50), nullable=False)
     second_name = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
     surname = db.Column(db.String(50), nullable=False)
-    pas_series = db.Column(db.Integer, nullable=False)
-    pas_number = db.Column(db.Integer, nullable=False)
+    pas_series = db.Column(db.String(5), nullable=False, unique=True)
+    pas_number = db.Column(db.String(6), nullable=False, unique=True)
 
     cars: Mapped[List["Car"]] = db.relationship(back_populates="resident")
     parking_slots: Mapped[List["ParkingSlot"]] = db.relationship(back_populates="resident")
     apartments: Mapped[List["Apartment"]] = db.relationship(back_populates="resident")
 
     def __repr__(self):
-        return f"resident_id: {self.id}, resident_name: {self.name}"
+        return f"resident_id: {self.id}, resident_name: {self.first_name}"
 
 
 class Apartment(db.Model):
 
     __tablename__ = 'apartments'
+    __table_args__ = (db.UniqueConstraint('resident_id', 'num'),)
 
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
@@ -46,13 +50,14 @@ class Apartment(db.Model):
 class Car(db.Model):
 
     __tablename__ = 'cars'
+    __table_args__ = (db.UniqueConstraint('resident_id', 'plate'),)
 
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
 
     brand = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(50), nullable=False)
-    plate = db.Column(db.String(50), nullable=False)
+    plate = db.Column(db.String(50), nullable=False, unique=True)
 
     resident: Mapped["Resident"] = db.relationship(back_populates="cars")
 
@@ -63,6 +68,7 @@ class Car(db.Model):
 class ParkingSlot(db.Model):
 
     __tablename__ = 'parking_slots'
+    __table_args__ = (db.UniqueConstraint('resident_id', 'num', 'letter'),)
 
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
@@ -75,12 +81,3 @@ class ParkingSlot(db.Model):
     def __repr__(self):
         return f"parking_slot: {self.id}"
 
-
-
-def getResident(resident_id):
-    with db.session() as s:
-        try:
-            res = Resident.query.get(resident_id)
-            return res
-        except:
-            print("Что-то пошло не так при загрузке жителя")

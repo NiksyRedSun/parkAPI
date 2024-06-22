@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, g, flash, abort, redirect, url_for, make_response
 from forms import LoginForm, RegisterForm, PostForm, GetCharForm, ItemsPostForm
-from models import db
 from flask_migrate import Migrate
 from sqlalchemy import URL
 from config import DB_HOST, DB_PASS, DB_USER, DB_PORT, DB_NAME
+from models_func import *
 
 
 url_object = URL.create(
@@ -26,8 +26,7 @@ app.config.from_object(__name__)
 db.init_app(app)
 migrate = Migrate(app, db, render_as_batch=True)
 
-# flask db migrate -m "message"
-# flask db upgrade
+
 
 
 
@@ -38,10 +37,17 @@ def index():
     return render_template("index.html", form=form)
 
 
+
 @app.route("/profile/<id>", methods=["POST", "GET"])
 def profile(id):
     form = PostForm()
     return render_template("index.html", form=form)
+
+
+@app.route("/test")
+def test():
+    print(postParkingSlot(3, num=3, letter="B"))
+    return "1"
 
 
 

@@ -18,6 +18,7 @@ residence = db.Table('residence',
 class Resident(db.Model):
 
     __tablename__ = 'residents'
+    __table_args__ = (db.UniqueConstraint('pas_series', 'pas_number'),)
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -54,13 +55,13 @@ class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=False)
 
-    model = db.Column(db.String(50), nullable=False)
-    plate = db.Column(db.String(50), nullable=False, unique=True)
+    model = db.Column(db.String(20), nullable=False)
+    plate = db.Column(db.String(6), nullable=False, unique=True)
 
     resident: Mapped["Resident"] = db.relationship(back_populates="cars")
 
     def __repr__(self):
-        return f"car_id: {self.id}"
+        return f"car_id: {self.id}, car_plate {self.plate}"
 
 
 class ParkingSlot(db.Model):
@@ -77,5 +78,5 @@ class ParkingSlot(db.Model):
     resident: Mapped["Resident"] = db.relationship(back_populates="parking_slots")
 
     def __repr__(self):
-        return f"parking_slot: {self.id}"
+        return f"parking_slot: {self.id}, number: {str(self.num) + self.letter}"
 

@@ -17,6 +17,10 @@ class NoParkingSlotFound(Exception):
     def __str__(self):
         return "Парковочное место с запрашиваемым id не найдено"
 
+class NoObjectFound(Exception):
+    def __str__(self):
+        return "Объект с запрашиваемым id не найден"
+
 
 # функции для работы с жителями
 
@@ -27,7 +31,7 @@ def getResident(resident_id=None):
                 res = Resident.query.get(resident_id)
 
                 if res is None:
-                    raise NoResidentFound
+                    raise NoResidentFound()
 
                 return res
             else:
@@ -114,22 +118,22 @@ def postApartment():
             print(e)
 
 
-# def putApartment(apartment_id, **kwargs):
-#     with db.session() as session:
-#         try:
-#             if kwargs:
-#                 res = Apartment.query.get(apartment_id)
-#
-#                 if res is None:
-#                     raise NoApartmentFound
-#
-#                 for key in kwargs:
-#                     setattr(res, key, kwargs[key])
-#                 session.add(res)
-#                 session.commit()
-#
-#         except Exception as e:
-#             print(e)
+def putApartment(apartment_id, **kwargs):
+    with db.session() as session:
+        try:
+            if kwargs:
+                res = Apartment.query.get(apartment_id)
+
+                if res is None:
+                    raise NoApartmentFound
+
+                for key in kwargs:
+                    setattr(res, key, kwargs[key])
+                session.add(res)
+                session.commit()
+
+        except Exception as e:
+            print(e)
 
 
 def deleteApartment(apartment_id):
@@ -266,6 +270,69 @@ def deleteParkingSlot(slot_id):
 
             if res is None:
                 raise NoParkingSlotFound
+
+            session.delete(res)
+            session.commit()
+
+        except Exception as e:
+            print(e)
+
+# функции для работы с объектами в принципе
+
+def getObject(Model, object_id=None):
+    with db.session() as session:
+        try:
+            if object_id is not None:
+                res = Model.query.get(object_id)
+
+                if res is None:
+                    raise NoObjectFound
+
+                return res
+            else:
+                res = Model.query.all()
+                return res
+
+        except Exception as e:
+            print(e)
+
+
+def postObject(Model, **kwargs):
+    with db.session() as session:
+        try:
+            res = Model(**kwargs)
+            session.add(res)
+            session.commit()
+
+        except Exception as e:
+            print(e)
+
+
+def putObject(Model, object_id, **kwargs):
+    with db.session() as session:
+        try:
+            if kwargs:
+                res = Model.query.get(object_id)
+
+                if res is None:
+                    raise NoObjectFound
+
+                for key in kwargs:
+                    setattr(res, key, kwargs[key])
+                session.add(res)
+                session.commit()
+
+        except Exception as e:
+            print(e)
+
+
+def deleteObject(Model, object_id):
+    with db.session() as session:
+        try:
+            res = Model.query.get(object_id)
+
+            if res is None:
+                raise NoObjectFound
 
             session.delete(res)
             session.commit()

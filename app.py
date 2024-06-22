@@ -47,13 +47,10 @@ def profile(id):
     return render_template("index.html", form=form)
 
 
-# @app.route("/test")
-# def test():
-#     with db.session() as session:
-#
-#
-#
-#     return generate_random_car_number()
+@app.route("/test")
+def test():
+    putObject(Car, 4, plate="555777")
+    return generate_random_car_number()
 
 
 

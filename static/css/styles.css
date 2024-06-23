@@ -11,14 +11,6 @@ div.post{
     margin-bottom: 5%;
 }
 
-div.post.char{
-    margin: 1.5% 13.5% 3% 13.5%;
-    border: solid #0a1237 6pt;
-    border-radius: 40px;
-    background-color: #f1ebe0;
-    width: 35%;
-}
-
 div.flMsg.success{
     font-size: 30px;
     font-weight: bold;
@@ -38,14 +30,6 @@ div.flMsg.error{
 }
 
 
-div.flMsg.errorInv{
-    font-size: 20px;
-    font-weight: bold;
-    color: #69172b;
-    font-family: 'Ubuntu Mono', monospace;
-    margin-bottom: 1%;
-}
-
 p.invalid-feedback {
     font-size: 20px;
     font-weight: bold;
@@ -61,20 +45,9 @@ div.nickname{
     font-weight: bold;
     padding: 1% 1% 2% 2%;
     color: #172b69;
-
     font-family: 'Ubuntu Mono', monospace;
 }
 
-div.add_but{
-    font-size: 40px;
-    font-weight: bold;
-    padding: 1% 1% 2% 2%;
-    color: #172b69;
-    font-family: 'Ubuntu Mono', monospace;
-    align-content: center;
-    width: 50%;
-
-}
 
 div.text{
     font-size: 25px;
@@ -86,49 +59,8 @@ div.text{
     width: 90%;
 }
 
-
-
-div.show_char{
-    font-size: 30px;
-    font-weight: bold;
-    padding: 0% 1% 1% 1%;
-    color: #203c93;
-    font-family: 'Ubuntu Mono', monospace;
-    text-align: center;
-    width: 100%;
-}
-
-div.show_char.razd{
-    font-size: 30px;
-    font-weight: bold;
-    padding: 0% 1% 1% 1%;
-    color: #203c93;
-    font-family: 'Ubuntu Mono', monospace;
-    text-align: center;
-    align-self: center;
-    width: 100%;
-}
-
-
-
-div.dateandtime{
-    font-size: 40px;
-    font-weight: bold;
-    line-height: 50px;
-    /*font-family: 'Roboto', sans-serif;*/
-    padding: 1% 3% 2% 3%;
-    color: #172b69;
-    font-family: 'Ubuntu Mono', monospace;
-    text-align: right;
-}
-
-textarea {
-    width: 99%;
-    resize: none;
-    font-size: 30px;
-    color: #203c93;
-    font-family: 'Ubuntu Mono', monospace;
-
+div.text a {
+    align-self: left;
 }
 
 
@@ -146,19 +78,6 @@ p.linename {
     margin-block-end: 0px;
     margin-block-start: 0px;
     padding-bottom: 1%;
-    padding-top: 3%;
-}
-
-
-p.linename.forAttack {
-    font-size: 30px;
-    font-weight: bold;
-    /*padding: 0% 3% 3% 3%;*/
-    color: #203c93;
-    font-family: 'Ubuntu Mono', monospace;
-    margin-block-end: 0px;
-    margin-block-start: 0px;
-    padding-bottom: 4%;
     padding-top: 3%;
 }
 
@@ -185,37 +104,18 @@ input {
     font-size: 30px;
 }
 
-/*input#remember {*/
-/*    s;*/
-/*}*/
 
 
 form {
     margin-left: 3%;
     width: 50%;
-    /*display: flex;*/
 }
 
 form.items {
     margin-left: 3%;
     width: 90%;
-    /*display: flex;*/
 }
 
-div.posttext {
-
-}
-
-div.postbut {
-    align-self: end;
-}
-
-form.postform {
-    /*margin-left: 3%;*/
-    width: 94%;
-    display: flex;
-    flex-direction: column;
-}
 
 
 div.form {

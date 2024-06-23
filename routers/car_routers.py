@@ -26,6 +26,8 @@ def new_car():
         if resident_id is None:
             raise WrongPathException
 
+        resident = getResident(resident_id)
+
         # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
         if request.method == "POST":
 
@@ -99,9 +101,9 @@ def edit_car():
         return redirect(url_for('index'))
 
     except:
-        flash("Что-то пошло не так, обратитесь к администратору для разъяснений")
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
 
-    return render_template("new_car.html", form=form, resident_id=resident_id)
+    return render_template("edit_car.html", form=form, resident_id=resident_id)
 
 
 # роут для удаления автомобиля

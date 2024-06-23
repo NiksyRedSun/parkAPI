@@ -93,7 +93,7 @@ def edit_resident():
     except:
         flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
 
-    return render_template("new_resident.html", form=form)
+    return render_template("edit_resident.html", form=form, resident_id=resident_id)
 
 
 # удаление жителя

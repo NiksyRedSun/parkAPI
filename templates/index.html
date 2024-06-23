@@ -4,7 +4,7 @@
 {% block content %}
     <div class="post">
         <div class="nickname">Список жителей дома по адресу г. Анапа, ул. Ленина, д. 74</div>
-        <div class="add_but"><a href="{{ url_for('resident_blueprint.new_resident') }}">Добавить жителя</a></div>
+        <div class="nickname"><a href="{{ url_for('resident_blueprint.new_resident') }}">Добавить жителя</a></div>
 
         {% for cat, msg in get_flashed_messages(True) %}
         <div class="flMsg {{cat}}">{{msg}}</div>

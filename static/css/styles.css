@@ -20,7 +20,7 @@ div.post.char{
 }
 
 div.flMsg.success{
-    font-size: 25px;
+    font-size: 30px;
     font-weight: bold;
     padding-left: 3%;
     color: #176955;
@@ -29,7 +29,7 @@ div.flMsg.success{
 }
 
 div.flMsg.error{
-    font-size: 25px;
+    font-size: 30px;
     font-weight: bold;
     padding-left: 3%;
     color: #69172b;

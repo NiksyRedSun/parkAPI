@@ -28,13 +28,14 @@ class NewResidentForm(FlaskForm):
 
     pas_number = StringField("Номер паспорта:", validators=[Regexp("^\d{6}$",
                                                                    message="Номер паспорта указывается в формате 000000")])
-    submit = SubmitField("Добавить")
+    submit = SubmitField("Отправить")
 
 
 class NewCarForm(FlaskForm):
     model = StringField("Модель:", validators=[Length(min=4, max=100, message="Модель быть от 4 до 100 символов")])
-    plate = StringField("Номер:", validators=[Regexp("^[А-Я]\d{3}[А-Я]{2}$", message="Номер автомобиля указывается в формате А555АА")])
-    submit = SubmitField("Добавить")
+    plate = StringField("Номер:", validators=[Regexp("^[А-Я]\d{3}[А-Я]{2}$", message="Номер автомобиля указывается в формате А555АА,"
+                                                                                     " используются только цифры и кирилические символы")])
+    submit = SubmitField("Отправить")
 
 
 def TakeParkingSlotForm(free_slots):

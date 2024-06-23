@@ -146,4 +146,9 @@ def leaveApartment(resident_id, apartment_id):
             raise NoApartmentAtResident
 
 
+def dataFromForm(data):
 
+    del data['submit']
+    del data['csrf_token']
+
+    return data

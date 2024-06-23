@@ -74,6 +74,46 @@ def new_resident():
     return render_template("new_resident.html", form=form)
 
 
+@app.route("/resident/edit", methods=["POST", "GET"])
+def edit_resident():
+
+    resident_id = request.args.get('resident_id')
+
+    try:
+
+        if resident_id is None:
+            raise WrongPathException
+
+        resident = getResident(resident_id)
+        form = NewResidentForm(obj=resident)
+
+        if request.method == "POST":
+
+            # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
+            if form.validate_on_submit():
+
+                data = dataFromForm(form.data)
+                putResident(resident_id, **data)
+                flash("Информация о жителе изменена", "success")
+                return redirect(url_for('resident', resident_id=resident_id))
+
+            else:
+                flash("Данные заполнены неверно", "error")
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
+
+    return render_template("new_resident.html", form=form)
+
+
 
 @app.route("/resident/delete")
 def delete_resident():
@@ -191,6 +231,47 @@ def new_car():
             if form.validate_on_submit():
                 postCar(resident_id, form.model.data, form.plate.data)
                 flash("Автомобиль успешно добавлен", "success")
+                return redirect(url_for('resident', resident_id=resident_id))
+
+            else:
+                flash("Данные заполнены неверно", "error")
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений")
+
+    return render_template("new_car.html", form=form, resident_id=resident_id)
+
+
+@app.route("/car/edit", methods=["POST", "GET"])
+def edit_car():
+
+
+    resident_id = request.args.get('resident_id')
+    car_id = request.args.get('car_id')
+
+    try:
+        if resident_id is None or car_id is None:
+            raise WrongPathException
+
+        # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
+        resident = getResident(resident_id)
+        car = getCar(car_id)
+        form = NewCarForm(obj=car)
+
+        if request.method == "POST":
+            # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
+            if form.validate_on_submit():
+                data = dataFromForm(form.data)
+                putCar(car_id, **data)
+                flash("Информация об автомобиле изменена", "success")
                 return redirect(url_for('resident', resident_id=resident_id))
 
             else:

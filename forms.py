@@ -3,11 +3,21 @@ from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextA
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
 
 
-class LoginForm(FlaskForm):
-    name = StringField("Логин: ", validators=[Length(min=4, max=100, message="Должен быть от 4 до 100 символов")])
-    psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=4, max=100, message="Пароль должен быть от 4 до 100 символов")])
-    remember = BooleanField("Запомнить: ", default=False)
-    submit = SubmitField("Войти")
+# в конце нужно будет добавить валидаторы:
+
+class NewResident(FlaskForm):
+    last_name = StringField("Фамилия:", validators=[Length(min=4, max=100, message="Должен быть от 4 до 100 символов")])
+    first_name = StringField("Имя:")
+    patronymic = StringField("Отчество:")
+    pas_series = StringField("Серия паспорта:")
+    pas_number = StringField("Номер паспорта:")
+    submit = SubmitField("Добавить")
+
+
+class NewCar(FlaskForm):
+    model = StringField("Модель:", validators=[Length(min=4, max=100, message="Должен быть от 4 до 100 символов")])
+    plate = StringField("Номер:")
+    submit = SubmitField("Добавить")
 
 
 class RegisterForm(FlaskForm):

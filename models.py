@@ -28,7 +28,7 @@ class Resident(db.Model):
     pas_series = db.Column(db.String(5), nullable=False)
     pas_number = db.Column(db.String(6), nullable=False)
 
-    cars: Mapped[List["Car"]] = db.relationship(back_populates="resident")
+    cars: Mapped[List["Car"]] = db.relationship(back_populates="resident", cascade="all,delete")
     parking_slots: Mapped[List["ParkingSlot"]] = db.relationship(back_populates="resident")
     apartments: Mapped[List["Apartment"]] = db.relationship("Apartment", secondary=residence,
                                                             backref=db.backref('residents'))

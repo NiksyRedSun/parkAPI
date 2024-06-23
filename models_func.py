@@ -1,5 +1,7 @@
 from models import *
 
+# Здесь расположены обычные функции и исключения под ORM
+
 
 class NoResidentFoundException(Exception):
     def __str__(self):
@@ -21,38 +23,38 @@ class NoObjectFoundException(Exception):
     def __str__(self):
         return "Объект с запрашиваемым id не найден"
 
+class WrongPathException(Exception):
+    def __str__(self):
+        return "Неправильно указаны параметры запроса"
+
 
 # функции для работы с жителями
 
+# тестово убран блок try/except
 def getResident(resident_id=None):
     with db.session() as session:
-        try:
-            if resident_id is not None:
-                result = Resident.query.get(resident_id)
 
-                if result is None:
-                    raise NoResidentFoundException
+        if resident_id is not None:
+            result = Resident.query.get(resident_id)
 
-                return result
-            else:
-                result = Resident.query.all()
-                return result
+            if result is None:
+                raise NoResidentFoundException
 
-        except Exception as e:
-            print(e)
+            return result
+        else:
+            result = Resident.query.all()
+            return result
+
 
 
 def postResident(last_name, first_name, patronymic, pas_series, pas_number):
     with db.session() as session:
-        try:
-            result = Resident(last_name=last_name, first_name=first_name, patronymic=patronymic,
-                              pas_series=pas_series, pas_number=pas_number)
-            session.add(result)
-            session.commit()
-            return result
 
-        except Exception as e:
-            print(e)
+        result = Resident(last_name=last_name, first_name=first_name, patronymic=patronymic,
+                          pas_series=pas_series, pas_number=pas_number)
+        session.add(result)
+        session.commit()
+        return result
 
 
 def putResident(resident_id, **kwargs):
@@ -75,17 +77,14 @@ def putResident(resident_id, **kwargs):
 
 def deleteResident(resident_id):
     with db.session() as session:
-        try:
-            result = Resident.query.get(resident_id)
 
-            if result is None:
-                raise NoResidentFoundException
+        result = Resident.query.get(resident_id)
 
-            session.delete(result)
-            session.commit()
+        if result is None:
+            raise NoResidentFoundException
 
-        except Exception as e:
-            print(e)
+        session.delete(result)
+        session.commit()
 
 
 # функции для работы с апартаментами
@@ -204,17 +203,15 @@ def putCar(car_id, **kwargs):
 
 def deleteCar(car_id):
     with db.session() as session:
-        try:
-            result = Car.query.get(car_id)
 
-            if result is None:
-                raise NoCarFoundException
+        result = Car.query.get(car_id)
 
-            session.delete(result)
-            session.commit()
+        if result is None:
+            raise NoCarFoundException
 
-        except Exception as e:
-            print(e)
+        session.delete(result)
+        session.commit()
+
 
 
 # функции для работы с парковочными местами

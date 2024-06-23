@@ -1,16 +1,14 @@
 body {
     background-color: #204c72;
-    /*margin-left: -1%;*/
-    /*margin-right: -1%;*/
 }
 
 
 div.post{
-    margin: 1.5% 13.5% 3% 13.5%;
+    width: 70%;
     border: solid #0a1237 6pt;
     border-radius: 40px;
     background-color: #f1ebe0;
-    /*width: 80%;*/
+    margin-bottom: 5%;
 }
 
 div.post.char{
@@ -22,7 +20,7 @@ div.post.char{
 }
 
 div.flMsg.success{
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     padding-left: 3%;
     color: #176955;
@@ -31,7 +29,7 @@ div.flMsg.success{
 }
 
 div.flMsg.error{
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     padding-left: 3%;
     color: #69172b;
@@ -48,20 +46,38 @@ div.flMsg.errorInv{
     margin-bottom: 1%;
 }
 
+p.invalid-feedback {
+    font-size: 20px;
+    font-weight: bold;
+    color: #69172b;
+    font-family: 'Ubuntu Mono', monospace;
+    margin-bottom: 1%;
+}
+
 
 
 div.nickname{
     font-size: 40px;
     font-weight: bold;
-    padding-left: 3%;
-    padding-top: 2.5%;
+    padding: 1% 1% 2% 2%;
     color: #172b69;
-    padding-bottom: 2%;
+
     font-family: 'Ubuntu Mono', monospace;
 }
 
+div.add_but{
+    font-size: 40px;
+    font-weight: bold;
+    padding: 1% 1% 2% 2%;
+    color: #172b69;
+    font-family: 'Ubuntu Mono', monospace;
+    align-content: center;
+    width: 50%;
+
+}
+
 div.text{
-    font-size: 30px;
+    font-size: 25px;
     font-weight: bold;
     padding: 0% 3% 3% 3%;
     color: #203c93;
@@ -69,6 +85,8 @@ div.text{
     text-align: justify;
     width: 90%;
 }
+
+
 
 div.show_char{
     font-size: 30px;
@@ -212,6 +230,8 @@ main {
     border: solid white 5pt;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding-bottom: 13%;
     padding-top: 2%;
 }

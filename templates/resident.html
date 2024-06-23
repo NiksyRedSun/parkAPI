@@ -1,0 +1,53 @@
+{% extends "base.html"%}
+
+
+{% block content %}
+{{ super() }}
+    <div class="post">
+        <div class="nickname"><a href="{{ url_for('index') }}">Вернуться к жителям</a></div>
+        <div class="nickname">{{resident.last_name}} {{resident.first_name}} {{resident.patronymic}}</div>
+
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flMsg {{cat}}">{{msg}}</div>
+        {% endfor %}
+
+
+        <div class="nickname">Данные паспорта:</div>
+        <div class="text">Серия: {{resident.pas_series}}</div>
+        <div class="text">Номер: {{resident.pas_number}}</div>
+
+
+        {% if resident.apartments %}
+        <div class="nickname">Принадлежащие квартиры:</div>
+        {% for apartment in resident.apartments %}
+        <div class="text">{{ loop.index }}. Квартира № {{apartment.num}}, жителей: {{len(apartment.residents)}},
+            процент владения: {{ 100//len(apartment.residents) }}%</div>
+        <div class="text"><a>Редактировать</a> <a>Удалить</a></div>
+        {% endfor %}
+        {% endif %}
+        <div class="text"><a>Заселить в квартиру</a></div>
+
+
+        {% if resident.cars %}
+        <div class="nickname">Принадлежащие автомобили:</div>
+        {% for car in resident.cars %}
+        <div class="text">{{ loop.index }}. {{car.model}} {{car.plate}} <a>Редактировать</a>
+            <a href="{{ url_for('delete_car', car_id=car.id, resident_id=resident.id) }}">Удалить</a></div>
+        {% endfor %}
+        {% endif %}
+        <div class="text"><a href="{{ url_for('new_car', resident_id=resident.id) }}">Добавить автомобиль</a></div>
+
+
+        {% if resident.parking_slots %}
+        <div class="nickname">Принадлежащие парковочные места:</div>
+        {% for slot in resident.parking_slots %}
+        <div class="text">{{ loop.index }}. {{slot.letter + str(slot.num)}} <a>Редактировать</a> <a>Удалить</a></div>
+        {% endfor %}
+        {% endif %}
+        <div class="text"><a>Добавить парковочное место</a></div>
+
+    </div>
+    <div class="sign-wrap-3">
+        <span class="sign_word">***</span>
+    </div>
+{% endblock %}

@@ -25,8 +25,8 @@ class Resident(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     patronymic = db.Column(db.String(50), nullable=False)
-    pas_series = db.Column(db.String(5), nullable=False, unique=True)
-    pas_number = db.Column(db.String(6), nullable=False, unique=True)
+    pas_series = db.Column(db.String(5), nullable=False)
+    pas_number = db.Column(db.String(6), nullable=False)
 
     cars: Mapped[List["Car"]] = db.relationship(back_populates="resident")
     parking_slots: Mapped[List["ParkingSlot"]] = db.relationship(back_populates="resident")
@@ -40,11 +40,13 @@ class Resident(db.Model):
 class Apartment(db.Model):
 
     __tablename__ = 'apartments'
+    __table_args__ = (db.UniqueConstraint('num'),)
 
     id = db.Column(db.Integer, primary_key=True)
+    num = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return f"apartment_id: {self.id}"
+        return f"apartment_id: {self.id}, apartment_num: {self.num}"
 
 
 class Car(db.Model):
@@ -67,7 +69,7 @@ class Car(db.Model):
 class ParkingSlot(db.Model):
 
     __tablename__ = 'parking_slots'
-    __table_args__ = (db.UniqueConstraint('num', 'letter'),)
+    __table_args__ = (db.UniqueConstraint('num', 'letter'), )
 
     id = db.Column(db.Integer, primary_key=True)
     resident_id = db.Column(db.ForeignKey('residents.id', ondelete="CASCADE"), nullable=True)
@@ -78,5 +80,5 @@ class ParkingSlot(db.Model):
     resident: Mapped["Resident"] = db.relationship(back_populates="parking_slots")
 
     def __repr__(self):
-        return f"parking_slot: {self.id}, number: {str(self.num) + self.letter}"
+        return f"parking_slot_id: {self.id}, number: {str(self.num) + self.letter}"
 

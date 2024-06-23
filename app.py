@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from sqlalchemy import URL
 from config import DB_HOST, DB_PASS, DB_USER, DB_PORT, DB_NAME
 from models_func import *
+from spec_models_func import *
 import random
 from test import *
 
@@ -47,19 +48,25 @@ def profile(id):
     return render_template("index.html", form=form)
 
 
-@app.route("/test")
-def test():
-    putObject(Car, 4, plate="555777")
-    return generate_random_car_number()
+# @app.route("/test")
+# def test():
+#     num_it = iter(list(range(1, 31)))
+#     with db.session() as session:
+#         for i in range(6, 35):
+#             putApartment(i, num=next(num_it))
+#
+#     return generate_random_car_number()
+
+
+
+
+
 
 
 
 @app.errorhandler(404)
 def pageNotFound(error):
     return render_template("error404.html"), 404
-
-
-
 
 
 if __name__ == "__main__":

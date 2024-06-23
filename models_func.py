@@ -3,6 +3,8 @@ from models import *
 # Здесь расположены обычные функции и исключения под ORM
 
 
+# исключения, которые могут возникнуть
+
 class NoResidentFoundException(Exception):
     def __str__(self):
         return "Житель с запрашиваемым id не найден"
@@ -28,9 +30,12 @@ class WrongPathException(Exception):
         return "Неправильно указаны параметры запроса"
 
 
-# функции для работы с жителями
+# стандартные ORM функции для удобной работы с бд
 
-# тестово убран блок try/except
+# блок try/except убран во всех случаях, чтобы ошибки могли всплывать в роутах, тогда пользователь будет видеть
+# возможные проблемы
+
+# получение, добавление, изменение, удаление жителя
 def getResident(resident_id=None):
     with db.session() as session:
 
@@ -46,7 +51,6 @@ def getResident(resident_id=None):
             return result
 
 
-
 def postResident(last_name, first_name, patronymic, pas_series, pas_number):
     with db.session() as session:
 
@@ -59,20 +63,17 @@ def postResident(last_name, first_name, patronymic, pas_series, pas_number):
 
 def putResident(resident_id, **kwargs):
     with db.session() as session:
-        try:
-            if kwargs:
-                result = Resident.query.get(resident_id)
+        if kwargs:
+            result = Resident.query.get(resident_id)
 
-                if result is None:
-                    raise NoResidentFoundException
+            if result is None:
+                raise NoResidentFoundException
 
-                for key in kwargs:
-                    setattr(result, key, kwargs[key])
-                session.add(result)
-                session.commit()
+            for key in kwargs:
+                setattr(result, key, kwargs[key])
+            session.add(result)
+            session.commit()
 
-        except Exception as e:
-            print(e)
 
 
 def deleteResident(resident_id):
@@ -91,114 +92,95 @@ def deleteResident(resident_id):
 
 def getApartment(apartment_id=None):
     with db.session() as session:
-        try:
-            if apartment_id is not None:
-                result = Apartment.query.get(apartment_id)
-
-                if result is None:
-                    raise NoApartmentFoundException
-
-                return result
-            else:
-                result = Apartment.query.all()
-                return result
-
-        except Exception as e:
-            print(e)
-
-
-def postApartment():
-    with db.session() as session:
-        try:
-            result = Apartment()
-            session.add(result)
-            session.commit()
-            return result
-
-        except Exception as e:
-            print(e)
-
-
-def putApartment(apartment_id, **kwargs):
-    with db.session() as session:
-        try:
-            if kwargs:
-                result = Apartment.query.get(apartment_id)
-
-                if result is None:
-                    raise NoApartmentFoundException
-
-                for key in kwargs:
-                    setattr(result, key, kwargs[key])
-                session.add(result)
-                session.commit()
-
-        except Exception as e:
-            print(e)
-
-
-def deleteApartment(apartment_id):
-    with db.session() as session:
-        try:
+        if apartment_id is not None:
             result = Apartment.query.get(apartment_id)
 
             if result is None:
                 raise NoApartmentFoundException
 
-            session.delete(result)
+            return result
+        else:
+            result = Apartment.query.all()
+            return result
+
+
+
+def postApartment():
+    with db.session() as session:
+
+        result = Apartment()
+        session.add(result)
+        session.commit()
+        return result
+
+
+
+
+def putApartment(apartment_id, **kwargs):
+    with db.session() as session:
+        if kwargs:
+            result = Apartment.query.get(apartment_id)
+
+            if result is None:
+                raise NoApartmentFoundException
+
+            for key in kwargs:
+                setattr(result, key, kwargs[key])
+            session.add(result)
             session.commit()
 
-        except Exception as e:
-            print(e)
+
+
+def deleteApartment(apartment_id):
+    with db.session() as session:
+        result = Apartment.query.get(apartment_id)
+
+        if result is None:
+            raise NoApartmentFoundException
+
+        session.delete(result)
+        session.commit()
+
 
 # функции для работы с автомобилями
 
 def getCar(car_id=None):
     with db.session() as session:
-        try:
-            if car_id is not None:
-                result = Car.query.get(car_id)
+        if car_id is not None:
+            result = Car.query.get(car_id)
 
-                if result is None:
-                    raise NoCarFoundException
+            if result is None:
+                raise NoCarFoundException
 
-                return result
-            else:
-                result = Car.query.all()
-                return result
+            return result
+        else:
+            result = Car.query.all()
+            return result
 
-        except Exception as e:
-            print(e)
 
 
 def postCar(resident_id, model, plate):
     with db.session() as session:
-        try:
-            result = Car(resident_id=resident_id, model=model, plate=plate)
-            session.add(result)
-            session.commit()
-            return result
+        result = Car(resident_id=resident_id, model=model, plate=plate)
+        session.add(result)
+        session.commit()
+        return result
 
-        except Exception as e:
-            print(e)
 
 
 def putCar(car_id, **kwargs):
     with db.session() as session:
-        try:
-            if kwargs:
-                result = Car.query.get(car_id)
+        if kwargs:
+            result = Car.query.get(car_id)
 
-                if result is None:
-                    raise NoCarFoundException
+            if result is None:
+                raise NoCarFoundException
 
-                for key in kwargs:
-                    setattr(result, key, kwargs[key])
-                session.add(result)
-                session.commit()
+            for key in kwargs:
+                setattr(result, key, kwargs[key])
+            session.add(result)
+            session.commit()
 
-        except Exception as e:
-            print(e)
 
 
 def deleteCar(car_id):
@@ -218,123 +200,51 @@ def deleteCar(car_id):
 
 def getParkingSlot(slot_id=None):
     with db.session() as session:
-            if slot_id is not None:
-                result = ParkingSlot.query.get(slot_id)
-
-                if result is None:
-                    raise NoParkingSlotFoundException
-
-                return result
-            else:
-                result = ParkingSlot.query.all()
-                return result
-
-
-
-def postParkingSlot(num, letter):
-    with db.session() as session:
-        try:
-            result = ParkingSlot(num=num, letter=letter)
-            session.add(result)
-            session.commit()
-            return result
-
-        except Exception as e:
-            print(e)
-
-
-def putParkingSlot(slot_id, **kwargs):
-    with db.session() as session:
-        try:
-            if kwargs:
-                result = ParkingSlot.query.get(slot_id)
-
-                if result is None:
-                    raise NoParkingSlotFoundException
-
-                for key in kwargs:
-                    setattr(result, key, kwargs[key])
-                session.add(result)
-                session.commit()
-
-        except Exception as e:
-            print(e)
-
-
-def deleteParkingSlot(slot_id):
-    with db.session() as session:
-        try:
+        if slot_id is not None:
             result = ParkingSlot.query.get(slot_id)
 
             if result is None:
                 raise NoParkingSlotFoundException
 
-            session.delete(result)
-            session.commit()
-
-        except Exception as e:
-            print(e)
-
-# функции для работы с объектами в принципе
-
-def getObject(Model, object_id=None):
-    with db.session() as session:
-        try:
-            if object_id is not None:
-                result = Model.query.get(object_id)
-
-                if result is None:
-                    raise NoObjectFoundException
-
-                return result
-            else:
-                result = Model.query.all()
-                return result
-
-        except Exception as e:
-            print(e)
-
-
-def postObject(Model, **kwargs):
-    with db.session() as session:
-        try:
-            result = Model(**kwargs)
-            session.add(result)
-            session.commit()
+            return result
+        else:
+            result = ParkingSlot.query.all()
             return result
 
-        except Exception as e:
-            print(e)
 
 
-def putObject(Model, object_id, **kwargs):
+def postParkingSlot(num, letter):
     with db.session() as session:
-        try:
-            if kwargs:
-                result = Model.query.get(object_id)
-
-                if result is None:
-                    raise NoObjectFoundException
-
-                for key in kwargs:
-                    setattr(result, key, kwargs[key])
-                session.add(result)
-                session.commit()
-
-        except Exception as e:
-            print(e)
+        result = ParkingSlot(num=num, letter=letter)
+        session.add(result)
+        session.commit()
+        return result
 
 
-def deleteObject(Model, object_id):
+
+def putParkingSlot(slot_id, **kwargs):
     with db.session() as session:
-        try:
-            result = Model.query.get(object_id)
+
+        if kwargs:
+            result = ParkingSlot.query.get(slot_id)
 
             if result is None:
-                raise NoObjectFoundException
+                raise NoParkingSlotFoundException
 
-            session.delete(result)
+            for key in kwargs:
+                setattr(result, key, kwargs[key])
+            session.add(result)
             session.commit()
 
-        except Exception as e:
-            print(e)
+
+
+def deleteParkingSlot(slot_id):
+    with db.session() as session:
+
+        result = ParkingSlot.query.get(slot_id)
+
+        if result is None:
+            raise NoParkingSlotFoundException
+
+        session.delete(result)
+        session.commit()

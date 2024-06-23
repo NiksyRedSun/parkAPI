@@ -4,7 +4,7 @@
 {% block content %}
     <div class="post">
         <div class="nickname">Список жителей дома по адресу г. Анапа, ул. Ленина, д. 74</div>
-        <div class="add_but"><a href="{{ url_for('new_resident') }}">Добавить жителя</a></div>
+        <div class="add_but"><a href="{{ url_for('resident_blueprint.new_resident') }}">Добавить жителя</a></div>
 
         {% for cat, msg in get_flashed_messages(True) %}
         <div class="flMsg {{cat}}">{{msg}}</div>
@@ -13,8 +13,8 @@
         {% if resident_list %}
         {% for resident in resident_list %}
         <div class="text">{{ loop.index }}. {{resident.last_name}} {{resident.first_name}} {{resident.patronymic}}
-            <a href="{{ url_for('resident', resident_id=resident.id) }}">Редактировать</a>
-            <a href="{{ url_for('delete_resident', resident_id=resident.id) }}">Удалить</a></div>
+            <a href="{{ url_for('resident_blueprint.resident', resident_id=resident.id) }}">Редактировать</a>
+            <a href="{{ url_for('resident_blueprint.delete_resident', resident_id=resident.id) }}">Удалить</a></div>
         {% endfor %}
         {% else %}
         <div class="nickname">Дом пока что пустой</div>

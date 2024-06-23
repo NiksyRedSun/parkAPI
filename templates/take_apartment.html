@@ -4,7 +4,7 @@
 {% block content %}
 {{ super() }}
     <div class="post">
-        <div class="nickname"><a href="{{ url_for('resident', resident_id=resident_id) }}">Вернуться к жителю</a></div>
+        <div class="nickname"><a href="{{ url_for('resident_blueprint.resident', resident_id=resident_id) }}">Вернуться к жителю</a></div>
 
     <div class="nickname">Занять квартиры</div>
 

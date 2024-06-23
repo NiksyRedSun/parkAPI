@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField, IntegerField, SelectMultipleField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
 
 
 # в конце нужно будет добавить валидаторы:
 
-class NewResident(FlaskForm):
+class NewResidentForm(FlaskForm):
     last_name = StringField("Фамилия:", validators=[Length(min=4, max=100, message="Должен быть от 4 до 100 символов")])
     first_name = StringField("Имя:")
     patronymic = StringField("Отчество:")
@@ -14,10 +14,24 @@ class NewResident(FlaskForm):
     submit = SubmitField("Добавить")
 
 
-class NewCar(FlaskForm):
+class NewCarForm(FlaskForm):
     model = StringField("Модель:", validators=[Length(min=4, max=100, message="Должен быть от 4 до 100 символов")])
     plate = StringField("Номер:")
     submit = SubmitField("Добавить")
+
+
+
+def TakeParkingSlotForm(free_slots):
+
+    class TakeParkingSlotForm(FlaskForm):
+        submit = SubmitField("Выбрать парковочные места")
+
+    for slot in free_slots:
+        setattr(TakeParkingSlotForm, f"id{slot.id}", BooleanField(f"Место {slot.letter + str(slot.num)}", default=False))
+
+
+    form = TakeParkingSlotForm()
+    return form
 
 
 class RegisterForm(FlaskForm):

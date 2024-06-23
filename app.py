@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, g, flash, abort, redirect, url_for, make_response
-from forms import NewResident, NewCar
+from forms import NewResidentForm, NewCarForm, TakeParkingSlotForm
 from flask_migrate import Migrate
 from sqlalchemy import URL
 from config import DB_HOST, DB_PASS, DB_USER, DB_PORT, DB_NAME
@@ -30,6 +30,7 @@ db.init_app(app)
 migrate = Migrate(app, db, render_as_batch=True)
 
 
+# Роуты для работы с жителями
 
 @app.route("/", methods=["POST", "GET"])
 def index():
@@ -54,7 +55,8 @@ def resident(resident_id):
 
 @app.route("/resident/new", methods=["POST", "GET"])
 def new_resident():
-    form = NewResident()
+    form = NewResidentForm()
+
     try:
         if request.method == "POST":
             # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
@@ -72,9 +74,11 @@ def new_resident():
     return render_template("new_resident.html", form=form)
 
 
+
 @app.route("/resident/delete")
 def delete_resident():
     resident_id = request.args.get('resident_id')
+
     try:
         if resident_id is None:
             raise WrongPathException
@@ -94,16 +98,55 @@ def delete_resident():
     return redirect(url_for('index'))
 
 
+# Роуты для работы с квартирами
+
+@app.route("/apartment/leave/")
+def leave_apartment():
+    resident_id = request.args.get('resident_id')
+    apartment_id = request.args.get('apartment_id')
+
+    try:
+        if resident_id is None or apartment_id is None:
+            raise WrongPathException
+
+        leave_apartment_func(resident_id, apartment_id)
+
+        flash("Пользователь успешно покинул квартиру", "success")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoApartmentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoApartmentAtResident as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except Exception:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+
+# Роуты для работы с автомобилями
+
 @app.route("/car/new", methods=["POST", "GET"])
 def new_car():
-    form = NewCar()
+    form = NewCarForm()
     resident_id = request.args.get('resident_id')
 
     try:
-        # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
         if resident_id is None:
             raise WrongPathException
 
+        # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
         resident = getResident(resident_id)
         if request.method == "POST":
             # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
@@ -154,6 +197,84 @@ def delete_car():
     except Exception:
         flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
         return redirect(url_for('resident', resident_id=resident_id))
+
+# Роуты для работы с парковочными местами
+
+@app.route("/parking_slot/leave/")
+def leave_parking_slot():
+    resident_id = request.args.get('resident_id')
+    parking_slot_id = request.args.get('parking_slot_id')
+
+    try:
+        if resident_id is None or parking_slot_id is None:
+            raise WrongPathException
+
+
+        leave_slot(resident_id, parking_slot_id)
+
+        flash("Пользователь успешно покинул парковочное место", "success")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoParkingSlotFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoParkingSlotAtResident as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+    except Exception:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
+        return redirect(url_for('resident', resident_id=resident_id))
+
+
+
+@app.route("/parking_slot/take/", methods=["POST", "GET"])
+def take_parking_slot():
+
+    resident_id = request.args.get('resident_id')
+    free_slots = get_free_slots()
+    form = TakeParkingSlotForm(free_slots)
+
+    try:
+        if resident_id is None:
+            raise WrongPathException
+
+        # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
+        resident = getResident(resident_id)
+
+        if request.method == "POST":
+            # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
+            if form.validate_on_submit():
+                take_free_slots(resident_id, form.data)
+
+                flash("Парковочные места успешно заняты", "success")
+                return redirect(url_for('resident', resident_id=resident_id))
+
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoParkingSlotSelected:
+        flash("Не выбрано ни одно парковочное место", "error")
+
+    except:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
+
+    return render_template("take_parking_slot.html", form=form, resident_id=resident_id)
 
 
 

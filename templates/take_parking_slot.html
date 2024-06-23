@@ -1,0 +1,39 @@
+{% extends "base.html"%}
+
+
+{% block content %}
+{{ super() }}
+    <div class="post">
+        <div class="nickname"><a href="{{ url_for('resident', resident_id=resident_id) }}">Вернуться к жителю</a></div>
+    <div class="nickname">Занять парковочные места</div>
+
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flMsg {{cat}}">{{msg}}</div>
+        {% endfor %}
+
+        <form action="" method="post">
+
+            {{ form.hidden_tag() }}
+            {% for field in form if field.name not in ['csrf_token', 'submit'] %}
+            <p class="linename">{{ field.label() }}
+            {% if field.errors %}
+                {{ field(class="invalid") }}
+
+                {% for e in field.errors %}
+                {{ e }}
+                {% endfor %}
+
+            {% else %}
+            {{ field() }}
+            {% endif %}
+            {% endfor %}
+            </p>
+        <p>{{ form.submit() }} </p>
+
+        </form>
+
+    </div>
+    <div class="sign-wrap-3">
+        <span class="sign_word">***</span>
+    </div>
+{% endblock %}

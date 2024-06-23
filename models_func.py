@@ -218,7 +218,6 @@ def deleteCar(car_id):
 
 def getParkingSlot(slot_id=None):
     with db.session() as session:
-        try:
             if slot_id is not None:
                 result = ParkingSlot.query.get(slot_id)
 
@@ -230,8 +229,6 @@ def getParkingSlot(slot_id=None):
                 result = ParkingSlot.query.all()
                 return result
 
-        except Exception as e:
-            print(e)
 
 
 def postParkingSlot(num, letter):

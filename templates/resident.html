@@ -21,9 +21,11 @@
         <div class="nickname">Принадлежащие квартиры:</div>
         {% for apartment in resident.apartments %}
         <div class="text">{{ loop.index }}. Квартира № {{apartment.num}}, жителей: {{len(apartment.residents)}},
-            процент владения: {{ 100//len(apartment.residents) }}%</div>
-        <div class="text"><a>Редактировать</a> <a>Удалить</a></div>
+            процент владения: {{ 100//len(apartment.residents) }}% -
+            <a href="{{ url_for('leave_apartment', apartment_id=apartment.id, resident_id=resident.id) }}">Выселить</a></div>
         {% endfor %}
+        {% else %}
+        <div class="nickname">Квартиры во владении отсутствуют</div>
         {% endif %}
         <div class="text"><a>Заселить в квартиру</a></div>
 
@@ -34,6 +36,8 @@
         <div class="text">{{ loop.index }}. {{car.model}} {{car.plate}} <a>Редактировать</a>
             <a href="{{ url_for('delete_car', car_id=car.id, resident_id=resident.id) }}">Удалить</a></div>
         {% endfor %}
+        {% else %}
+        <div class="nickname">Автомобили во владении отсутствуют</div>
         {% endif %}
         <div class="text"><a href="{{ url_for('new_car', resident_id=resident.id) }}">Добавить автомобиль</a></div>
 
@@ -41,10 +45,13 @@
         {% if resident.parking_slots %}
         <div class="nickname">Принадлежащие парковочные места:</div>
         {% for slot in resident.parking_slots %}
-        <div class="text">{{ loop.index }}. {{slot.letter + str(slot.num)}} <a>Редактировать</a> <a>Удалить</a></div>
+        <div class="text">{{ loop.index }}. {{slot.letter + str(slot.num)}}
+            <a href="{{ url_for('leave_parking_slot', parking_slot_id=slot.id, resident_id=resident.id) }}">Освободить</a></div>
         {% endfor %}
+        {% else %}
+        <div class="nickname">Парковочные места во владении отсутствуют</div>
         {% endif %}
-        <div class="text"><a>Добавить парковочное место</a></div>
+        <div class="text"><a href="{{ url_for('take_parking_slot', resident_id=resident.id)}}">Занять место</a></div>
 
     </div>
     <div class="sign-wrap-3">

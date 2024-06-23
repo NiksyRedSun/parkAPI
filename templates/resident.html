@@ -27,7 +27,7 @@
         {% else %}
         <div class="nickname">Квартиры во владении отсутствуют</div>
         {% endif %}
-        <div class="text"><a>Заселить в квартиру</a></div>
+        <div class="text"><a href="{{ url_for('take_apartment', resident_id=resident.id)}}">Заселить в квартиру</a></div>
 
 
         {% if resident.cars %}

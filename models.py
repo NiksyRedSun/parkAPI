@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy.orm import Mapped, joinedload
+from sqlalchemy.orm import Mapped, joinedload, subqueryload, lazyload
+from sqlalchemy import desc
 from typing import List
 
 
@@ -30,8 +31,8 @@ class Resident(db.Model):
 
     cars: Mapped[List["Car"]] = db.relationship(back_populates="resident", cascade="all,delete")
     parking_slots: Mapped[List["ParkingSlot"]] = db.relationship(back_populates="resident")
-    apartments: Mapped[List["Apartment"]] = db.relationship("Apartment", secondary=residence,
-                                                            backref=db.backref('residents'))
+    apartments: Mapped[List["Apartment"]] = db.relationship("Apartment", secondary=residence, back_populates='residents',
+                                                            lazy='subquery')
 
     def __repr__(self):
         return f"resident_id: {self.id}, resident_name: {self.first_name}"
@@ -44,6 +45,9 @@ class Apartment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     num = db.Column(db.Integer, nullable=False)
+
+    residents: Mapped[List["Resident"]] = db.relationship("Resident", secondary=residence, back_populates="apartments",
+                                                          lazy='subquery')
 
     def __repr__(self):
         return f"apartment_id: {self.id}, apartment_num: {self.num}"

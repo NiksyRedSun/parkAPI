@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, g, flash, abort, redirect, url_for, make_response
-from forms import NewResidentForm, NewCarForm, TakeParkingSlotForm
+from forms import NewResidentForm, NewCarForm, TakeParkingSlotForm, TakeApartmentForm
 from flask_migrate import Migrate
 from sqlalchemy import URL
 from config import DB_HOST, DB_PASS, DB_USER, DB_PORT, DB_NAME
@@ -109,7 +109,7 @@ def leave_apartment():
         if resident_id is None or apartment_id is None:
             raise WrongPathException
 
-        leave_apartment_func(resident_id, apartment_id)
+        leaveApartment(resident_id, apartment_id)
 
         flash("Пользователь успешно покинул квартиру", "success")
         return redirect(url_for('resident', resident_id=resident_id))
@@ -133,6 +133,44 @@ def leave_apartment():
     except Exception:
         flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
         return redirect(url_for('resident', resident_id=resident_id))
+
+
+@app.route("/apartment/take/", methods=["POST", "GET"])
+def take_apartment():
+
+    resident_id = request.args.get('resident_id')
+    apartments = getApartments(resident_id)
+    form = TakeApartmentForm(apartments)
+
+    try:
+        if resident_id is None:
+            raise WrongPathException
+
+        # Для проверки того, существует ли житель с таким ид, если нет, то вылетит ошибка
+        resident = getResident(resident_id)
+
+        if request.method == "POST":
+            # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
+            if form.validate_on_submit():
+                takeApartments(resident_id, form.data)
+                flash("Квартиры успешно заняты", "success")
+                return redirect(url_for('resident', resident_id=resident_id))
+
+    except NoResidentFoundException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except WrongPathException as e:
+        flash(e.__str__(), "error")
+        return redirect(url_for('index'))
+
+    except NoApartmentSelected as e:
+        flash(e.__str__(), "error")
+
+    except:
+        flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
+
+    return render_template("take_apartment.html", form=form, resident_id=resident_id)
 
 
 # Роуты для работы с автомобилями
@@ -198,6 +236,7 @@ def delete_car():
         flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
         return redirect(url_for('resident', resident_id=resident_id))
 
+
 # Роуты для работы с парковочными местами
 
 @app.route("/parking_slot/leave/")
@@ -209,8 +248,7 @@ def leave_parking_slot():
         if resident_id is None or parking_slot_id is None:
             raise WrongPathException
 
-
-        leave_slot(resident_id, parking_slot_id)
+        leaveSlot(resident_id, parking_slot_id)
 
         flash("Пользователь успешно покинул парковочное место", "success")
         return redirect(url_for('resident', resident_id=resident_id))
@@ -241,8 +279,8 @@ def leave_parking_slot():
 def take_parking_slot():
 
     resident_id = request.args.get('resident_id')
-    free_slots = get_free_slots()
-    form = TakeParkingSlotForm(free_slots)
+    free_slots = getFreeSlots()
+    form, slots_num = TakeParkingSlotForm(free_slots)
 
     try:
         if resident_id is None:
@@ -254,7 +292,7 @@ def take_parking_slot():
         if request.method == "POST":
             # проверка на то, отправленны ли какие-то данные в форму, а также проверка корректности данных
             if form.validate_on_submit():
-                take_free_slots(resident_id, form.data)
+                takeFreeSlots(resident_id, form.data)
 
                 flash("Парковочные места успешно заняты", "success")
                 return redirect(url_for('resident', resident_id=resident_id))
@@ -268,13 +306,13 @@ def take_parking_slot():
         flash(e.__str__(), "error")
         return redirect(url_for('index'))
 
-    except NoParkingSlotSelected:
-        flash("Не выбрано ни одно парковочное место", "error")
+    except NoParkingSlotSelected as e:
+        flash(e.__str__(), "error")
 
     except:
         flash("Что-то пошло не так, обратитесь к администратору для разъяснений", "error")
 
-    return render_template("take_parking_slot.html", form=form, resident_id=resident_id)
+    return render_template("take_parking_slot.html", form=form, resident_id=resident_id, slots_num=slots_num)
 
 
 

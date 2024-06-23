@@ -16,6 +16,9 @@ class NoParkingSlotSelected(Exception):
     def __str__(self):
         return "Не выбрано ни одного парковочного места"
 
+class NoApartmentSelected(Exception):
+    def __str__(self):
+        return "Не выбрана ни одна квартира"
 
 # функции для жителей
 def getResidentWithJoin(resident_id):
@@ -28,13 +31,15 @@ def getResidentWithJoin(resident_id):
             raise NoResidentFoundException
 
         for apartment in resident.apartments:
-            print(apartment.residents)
+            apartment.residents
+
+        session.add(resident)
 
         return resident
 
 
 # функции для парковочных мест
-def leave_slot(resident_id, parking_slot_id):
+def leaveSlot(resident_id, parking_slot_id):
     with db.session() as session:
 
         resident = Resident.query.options(joinedload(Resident.parking_slots)).get(resident_id)
@@ -53,7 +58,7 @@ def leave_slot(resident_id, parking_slot_id):
         else:
             raise NoParkingSlotAtResident
 
-def get_free_slots():
+def getFreeSlots():
     with db.session() as session:
 
         slots = ParkingSlot.query.filter(ParkingSlot.resident_id==None).all()
@@ -61,7 +66,17 @@ def get_free_slots():
         return slots
 
 
-def take_free_slots(resident_id, data):
+def getApartments(resident_id):
+    with db.session() as session:
+        resident = Resident.query.get(resident_id)
+        apartments = Apartment.query.options(joinedload(Apartment.residents)).all()
+        apartments = list(filter(lambda x: resident not in x.residents, apartments))
+        apartments.sort(key=lambda x: x.num)
+
+        return apartments
+
+
+def takeFreeSlots(resident_id, data):
     with db.session() as session:
 
         resident = Resident.query.get(resident_id)
@@ -85,9 +100,33 @@ def take_free_slots(resident_id, data):
             raise NoParkingSlotSelected
 
 
+def takeApartments(resident_id, data):
+    with db.session() as session:
+
+        resident = Resident.query.get(resident_id)
+
+        if resident is None:
+            raise NoResidentFoundException
+
+        del data['submit']
+        del data['csrf_token']
+
+        apartments_ids = list(filter(lambda x: data[x], data))
+        if apartments_ids:
+            apartments_ids = list(map(lambda x: int(x[2:]), apartments_ids))
+            for id in apartments_ids:
+                apartment = Apartment.query.get(id)
+                apartment.residents.append(resident)
+                session.add(apartment)
+                session.commit()
+
+        else:
+            raise NoApartmentSelected
+
+
 
 # функции для квартир
-def leave_apartment_func(resident_id, apartment_id):
+def leaveApartment(resident_id, apartment_id):
     with db.session() as session:
 
         resident = Resident.query.options(joinedload(Resident.apartments)).get(resident_id)

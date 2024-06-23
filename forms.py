@@ -26,11 +26,26 @@ def TakeParkingSlotForm(free_slots):
     class TakeParkingSlotForm(FlaskForm):
         submit = SubmitField("Выбрать парковочные места")
 
+
     for slot in free_slots:
         setattr(TakeParkingSlotForm, f"id{slot.id}", BooleanField(f"Место {slot.letter + str(slot.num)}", default=False))
 
 
     form = TakeParkingSlotForm()
+    return form, len(free_slots)
+
+
+def TakeApartmentForm(apartments):
+
+    class TakeApartmentForm(FlaskForm):
+        submit = SubmitField("Выбрать квартиры")
+
+
+    for apartment in apartments:
+        setattr(TakeApartmentForm, f"id{apartment.id}", BooleanField(f"Квартира: {str(apartment.num)}. Жителей: {str(len(apartment.residents))}"
+                                                                       , default=False))
+
+    form = TakeApartmentForm()
     return form
 
 

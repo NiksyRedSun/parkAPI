@@ -5,8 +5,8 @@
 {{ super() }}
     <div class="post">
         <div class="nickname"><a href="{{ url_for('resident', resident_id=resident_id) }}">Вернуться к жителю</a></div>
-        {% if slots_num %}
-    <div class="nickname">Занять парковочные места</div>
+
+    <div class="nickname">Занять квартиры</div>
 
         {% for cat, msg in get_flashed_messages(True) %}
         <div class="flMsg {{cat}}">{{msg}}</div>
@@ -16,6 +16,7 @@
 
             {{ form.hidden_tag() }}
             {% for field in form if field.name not in ['csrf_token', 'submit'] %}
+
             <p class="linename">{{ field.label() }}
             {% if field.errors %}
                 {{ field(class="invalid") }}
@@ -29,11 +30,10 @@
             {% endif %}
             {% endfor %}
             </p>
+
         <p>{{ form.submit() }} </p>
         </form>
-        {% else %}
-        <div class="nickname">Свободных парковочных мест нет</div>
-        {% endif %}
+
     </div>
     <div class="sign-wrap-3">
         <span class="sign_word">***</span>

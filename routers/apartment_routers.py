@@ -12,7 +12,7 @@ apartment_blueprint = Blueprint('apartment_blueprint', __name__)
 # Роуты для работы с квартирами
 
 # Этот нужен для того чтобы была возможность покинуть квартиру
-@apartment_blueprint.route("/apartment/leave/")
+@apartment_blueprint.route("/apartment/leave")
 def leave_apartment():
 
     # здесь подгружаются дополнительные параметры из запроса
